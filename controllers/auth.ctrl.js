@@ -2,7 +2,6 @@ import User from "../models/user.model"
 import { signToken } from "../helpers/jwttoken"
 import Orders from "../models/orders.model"
 
-
 export default class AuthController {
   /*
   |--------------------------------------------------------------------------
@@ -13,7 +12,7 @@ export default class AuthController {
     const { username, password } = req.body
 
     if (!username || !password) {
-      return res.status(400).json("Wrong username or password")
+      return res.status(400).json({ message: "Wrong username or password" })
     }
 
     try {
@@ -22,7 +21,7 @@ export default class AuthController {
 
         // check if user exist
         if (!user) {
-          return res.status(400).json("Wrong username or password")
+          return res.status(400).json({ message: "Wrong username or password" })
         }
 
         // check if password matched
@@ -33,7 +32,7 @@ export default class AuthController {
               token: signToken(user),
             })
           } else {
-            return res.status(400).json("Wrong username or password")
+            return res.status(400).json({ message: "Wrong username or password" })
           }
         })
       })

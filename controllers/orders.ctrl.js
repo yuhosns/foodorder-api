@@ -12,19 +12,30 @@ export default class OrdersController {
   static async onPost(req, res) {
     const { name, vendor, foodNumbers, totalAmount, status } = req.body
 
-    // personal request
-    let request = new Request({
-      name:        name,
-      vendor:      vendor,
-      foodNumbers: foodNumbers,
-      totalAmount: totalAmount,
-      status:      status,
-      date:        TODAY_DATE,
-    })
-    request.save()
+    let validateAmount = false
+    if (totalAmount) {
+      validateAmount = /^[0-9]*\.?[0-9]*$/.test(totalAmount)
+    }
+
+    if (validateAmount === false) {
+      return res.status(400).json({ type: "totalAmount_number_only" })
+    }
+
+
 
     // order to submit
     try {
+      // personal request
+      let request = new Request({
+        name:        name,
+        vendor:      vendor,
+        foodNumbers: foodNumbers,
+        totalAmount: totalAmount,
+        status:      status,
+        date:        TODAY_DATE,
+      })
+      request.save()
+
       Orders.collection.countDocuments({ _id: TODAY_DATE }, async function (err, count) {
         if (count > 0) {
           const response = await Orders.findByIdAndUpdate(TODAY_DATE,
@@ -32,20 +43,13 @@ export default class OrdersController {
               "$push": { "orders": request },
               $inc:    { totalToPay: +request.totalAmount },
             },
-            function (error, success) {
-              if (error) {
-                console.log(error)
-              } else {
-                console.log("success")
-              }
-            },
           )
           console.log("今天已有订单，添加多一单")
           return res.json(response)
         } else {
           let orders = new Orders()
           orders._id = TODAY_DATE
-          orders.totalToPay = orders.totalToPay + request.totalAmount
+          orders.totalToPay = request.totalAmount
           orders.orders.push(request)
           const response = await orders.save()
           console.log("今天还没有人下订单，添加新的订单")
