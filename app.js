@@ -1,6 +1,5 @@
 import express from "express"
 import v1 from "./routes/v1"
-import config from "./config/dev.config"
 import connectToDb from "./db/connect"
 import cors from "cors"
 
