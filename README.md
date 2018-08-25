@@ -7,3 +7,8 @@ start dev server
 ```
 npm run nodemon
 ```
+
+set env for db  
+````
+DATABASE_URL = "your-mongodb-url"
+```
