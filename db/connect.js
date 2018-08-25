@@ -3,12 +3,15 @@ import config from "../config/dev.config"
 
 Mongoose.Promise = global.Promise
 
+
+const DATABASE_URL = process.env.DATABASE_URL || "mongodb+srv://snskl:qwe123@clustersnskl-k6xfk.mongodb.net/test?retryWrites=true"
+
 const connectToDb = async () => {
   let dbHost = config.dbHost
   let dbPort = config.dbPort
   let dbName = config.dbName
   try {
-    await Mongoose.connect(`mongodb://${dbHost}:${dbPort}/${dbName}`, { useNewUrlParser: true })
+    await Mongoose.connect(DATABASE_URL, { useNewUrlParser: true })
     console.log("Connected to MongoDB")
   }
   catch (err) {
