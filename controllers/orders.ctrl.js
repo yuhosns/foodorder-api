@@ -25,9 +25,9 @@ export default class OrdersController {
 
     // order to submit
     try {
-      Orders.collection.countDocuments({ _id: TODAY_DATE }, function (err, count) {
+      Orders.collection.countDocuments({ _id: TODAY_DATE }, async function (err, count) {
         if (count > 0) {
-          Orders.findByIdAndUpdate(TODAY_DATE,
+          const response = await Orders.findByIdAndUpdate(TODAY_DATE,
             {
               "$push": { "orders": request },
               $inc:    { totalToPay: +request.totalAmount },
@@ -41,16 +41,17 @@ export default class OrdersController {
             },
           )
           console.log("今天已有订单，添加多一单")
+          return res.json(response)
         } else {
           let orders = new Orders()
           orders._id = TODAY_DATE
-          orders.totalToPay = request.totalAmount
+          orders.totalToPay = orders.totalToPay + request.totalAmount
           orders.orders.push(request)
-          orders.save()
+          const response = await orders.save()
           console.log("今天还没有人下订单，添加新的订单")
+          return res.json(response)
         }
       })
-      return res.end()
     } catch (err) {
       console.log(err)
       return res.status(500).json({
@@ -66,7 +67,7 @@ export default class OrdersController {
   */
   static async onGet(req, res) {
     try {
-      const response = await Orders.findById(TODAY_DATE).populate("orders")
+      const response = await Orders.find().populate("orders")
       return res.json(response)
 
     } catch (err) {
