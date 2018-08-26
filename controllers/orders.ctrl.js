@@ -2,7 +2,7 @@ import Request from "../models/request.model"
 import Orders from "../models/orders.model"
 import getTodayDate from "../helpers/todaydate"
 
-const TODAY_DATE = getTodayDate()
+const TODAY_STRING = getTodayDate()
 export default class OrdersController {
   /*
   |--------------------------------------------------------------------------
@@ -21,8 +21,6 @@ export default class OrdersController {
       return res.status(400).json({ type: "totalAmount_number_only" })
     }
 
-
-
     // order to submit
     try {
       // personal request
@@ -32,23 +30,24 @@ export default class OrdersController {
         foodNumbers: foodNumbers,
         totalAmount: totalAmount,
         status:      status,
-        date:        TODAY_DATE,
+        order_id:        TODAY_STRING,
       })
       request.save()
 
-      Orders.collection.countDocuments({ _id: TODAY_DATE }, async function (err, count) {
+      Orders.collection.countDocuments({ _id: TODAY_STRING }, async function (err, count) {
         if (count > 0) {
-          const response = await Orders.findByIdAndUpdate(TODAY_DATE,
+          const response = await Orders.findByIdAndUpdate(TODAY_STRING,
             {
               "$push": { "orders": request },
               $inc:    { totalToPay: +request.totalAmount },
             },
           )
+
           console.log("今天已有订单，添加多一单")
           return res.json(response)
         } else {
           let orders = new Orders()
-          orders._id = TODAY_DATE
+          orders._id = TODAY_STRING
           orders.totalToPay = request.totalAmount
           orders.orders.push(request)
           const response = await orders.save()
@@ -71,7 +70,7 @@ export default class OrdersController {
   */
   static async onGet(req, res) {
     try {
-      const response = await Orders.find().populate("orders")
+      const response = await Orders.find().sort('-date').populate("orders")
       return res.json(response)
 
     } catch (err) {
@@ -91,7 +90,7 @@ export default class OrdersController {
     const { id, foodNumbers } = req.body
     try {
       /*
-      Orders.findById(TODAY_DATE, { "orderList.$": 1 }, function (err, response) {
+      Orders.findById(TODAY_STRING, { "orderList.$": 1 }, function (err, response) {
         console.log(response)
         if (response) {
           const orderToEdit = response.orderList.find(order => {

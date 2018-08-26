@@ -47,7 +47,7 @@ export default class jwtToken {
       console.log(role, " logged in")
 
       // check if role permitted
-      if (roles.indexOf(role) === -1 && role !== "Boss") {
+      if (roles.indexOf(role) === -1) {
         return res.status(401).json({
           type: "Unauthorized",
         })

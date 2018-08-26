@@ -5,9 +5,9 @@ export const requestSchema = new SCHEMA({
   name:        { type: String, required: true },
   vendor:      String,
   foodNumbers: String,
-  totalAmount:  { type: Number, get: getPrice, set: setPrice },
+  totalAmount: { type: Number, get: getPrice, set: setPrice },
   status:      String,
-  date:        String,
+  order_id:    String,
 })
 
 function getPrice(num) {

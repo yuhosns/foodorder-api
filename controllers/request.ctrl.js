@@ -2,7 +2,7 @@ import Request from "../models/request.model"
 import Orders from "../models/orders.model"
 import getTodayDate from "../helpers/todaydate"
 
-const TODAY_DATE = getTodayDate()
+const TODAY_STRING = getTodayDate()
 export default class RequestController {
   /*
  |--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ export default class RequestController {
   static async onPatch(req, res) {
     const { id, foodNumbers } = req.body
     try {
-      Orders.findById(TODAY_DATE, { "orderList.$": 1 }, function (err, response) {
+      Orders.findById(TODAY_STRING, { "orderList.$": 1 }, function (err, response) {
         console.log(response)
         if (response) {
           const orderToEdit = response.orderList.find(order => {
@@ -66,15 +66,19 @@ export default class RequestController {
   */
   static async onDelete(req, res) {
     const id = req.body.id || req.params.id
+    const { orderID, totalAmount } = req.body
     try {
-      Request.findByIdAndRemove(id, function (err, response) {
-        if (err) {
-          console.log(err)
-          return res.json(err)
-        }
 
-        return res.end()
-      })
+      await Promise.all([
+        Request.findByIdAndRemove(id),
+        Orders.findByIdAndUpdate(orderID,
+          {
+            $inc: { totalToPay: -totalAmount },
+          },
+        ),
+      ])
+
+      return res.end()
     } catch (err) {
       console.log(err)
       return res.status(400).json(err)

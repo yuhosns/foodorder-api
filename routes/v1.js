@@ -18,7 +18,7 @@ router.route("/login")
   .post(AuthController.onLogIn)
 
 router.route("/profile")
-  .get(authorize("Staff"), AuthController.getLoggedInUserProfile)
+  .get(authorize(["Boss", "Staff"]), AuthController.getLoggedInUserProfile)
 
 router.route("/users")
   .get(UsersController.onGet)
@@ -26,8 +26,8 @@ router.route("/users")
 router.route("/user/add")
   .post(UserController.onPost)
 
-router.route("/request/:id/delete")
-  .delete(RequestController.onDelete)
+router.route("/request/:id")
+  .delete(authorize(["Boss", "Staff"]), RequestController.onDelete)
 
 router.route("/orders")
   .get(OrdersController.onGet)
