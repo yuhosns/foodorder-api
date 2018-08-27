@@ -1,3 +1,8 @@
+set env for db  
+```
+DATABASE_URL = "your-mongodb-url"
+```
+
 create first root admin user
 ```
 npm run createadmin
@@ -12,9 +17,4 @@ role:Boss
 start dev server
 ```
 npm run nodemon
-```
-
-set env for db  
-```
-DATABASE_URL = "your-mongodb-url"
 ```
