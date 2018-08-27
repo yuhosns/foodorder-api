@@ -6,6 +6,7 @@ import OrdersController from "../controllers/orders.ctrl"
 import RequestController from "../controllers/request.ctrl"
 import UsersController from "../controllers/users.ctrl"
 import AuthController from "../controllers/auth.ctrl"
+import RoleController from "../controllers/role.ctrl"
 
 let router = express.Router()
 const authorize = jwtToken.authorize
@@ -25,6 +26,12 @@ router.route("/users")
 
 router.route("/user/add")
   .post(UserController.onPost)
+
+router.route("/user/:id/role")
+  .post(authorize("Boss"), UserController.setRole)
+
+router.route("/roles")
+  .get(RoleController.onGet)
 
 router.route("/request/:id")
   .delete(authorize(["Boss", "Staff"]), RequestController.onDelete)

@@ -29,6 +29,7 @@ export default class UserController {
   | PATCH
   |--------------------------------------------------------------------------
   */
+
   // TODO
   static async onPatch(req, res) {
     const { username, password } = req.body
@@ -37,9 +38,8 @@ export default class UserController {
       userRole = req.authClaims.userRole
     }
 
-
     let userModel = new User({
-      role:     "Staff",
+      role: "Staff",
     })
 
     try {
@@ -51,6 +51,25 @@ export default class UserController {
     }
   }
 
+  /*
+  |--------------------------------------------------------------------------
+  | SET ROLE
+  |--------------------------------------------------------------------------
+  */
+  static async setRole(req, res) {
+    const userID = req.body.userID || req.params.id
+    const { role } = req.body
+    try {
 
+      const options = { new: true }
+      const response = await User.findByIdAndUpdate(userID, {
+        $set: { "role": role },
+      }, options)
+      return res.json(response)
+    } catch (err) {
+      console.log(err)
+      return res.json(err)
+    }
+  }
 
 }

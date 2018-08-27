@@ -25,10 +25,17 @@ MongoClient.connect(url, async function (err, db) {
       dbo.collection("users").insertOne(userToAdd, function (err, res) {
         if (err) throw err
         console.log("1 document inserted")
-        db.close()
       })
+
+      const roles = [{ name: "Manager" }, { name: "Staff" }]
+      dbo.collection("roles").insertMany(roles, function (err, res) {
+        if (err) throw err
+        console.log("roles documents inserted")
+      })
+      db.close()
     })
   })
+
 })
 
 
