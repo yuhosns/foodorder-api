@@ -1,6 +1,6 @@
 var MongoClient = require("mongodb").MongoClient
 var bcrypt = require("bcrypt")
-var url = process.env.DATABASE_URL || "mongodb+srv://snskl:qwe123@clustersnskl-k6xfk.mongodb.net/test?retryWrites=true"
+var url = process.env.DATABASE_URL || "mongodb://localhost:27017/pms"
 
 MongoClient.connect(url, async function (err, db) {
   if (err) throw err
