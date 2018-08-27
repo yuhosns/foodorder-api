@@ -1,6 +1,12 @@
-start server
+create first root admin user
 ```
-npm run start
+npm run createadmin
+```
+It'll create an account with details below: 
+```
+username:boss
+password:123
+role:Boss
 ```
 
 start dev server
